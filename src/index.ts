@@ -1,10 +1,8 @@
-import { ApolloServer } from "@apollo/server";
-
-import mongoose from "mongoose";
 import connectToMongoDB from "../config/mongodb.config";
-import MonetaryItem from "../models/monetaryItem.model";
 import monetaryItem from "../models/monetaryItem.model";
 import { configureApolloServer } from "../config/apolloServer.config";
+import { ApolloServer } from "@apollo/server";
+import mongoose from "mongoose";
 
 const typeDefs = `#graphql
     type MonetaryItem {
@@ -42,18 +40,18 @@ const typeDefs = `#graphql
 
 const resolvers = {
   Query: {
-    getMonetaryItems: async (_: any, args: { limit: number }) => {
-      const monetaryItems = await MonetaryItem.find().limit(args.limit);
+    getMonetaryItems: async (_: unknown, args: { limit: number }) => {
+      const monetaryItems = await monetaryItem.find().limit(args.limit);
       return monetaryItems;
     },
-    getMonetaryItem: async (_: any, args: { _id: string }) => {
-      const monetaryItemById = await MonetaryItem.findById(args._id);
+    getMonetaryItem: async (_: unknown, args: { _id: string }) => {
+      const monetaryItemById = await monetaryItem.findById(args._id);
       return monetaryItemById;
     },
   },
   Mutation: {
     createMonetaryItem: async (
-      _: any,
+      _: unknown,
       args: {
         monetaryItem: {
           name: string;
@@ -80,7 +78,7 @@ const resolvers = {
       return newMonetaryItem;
     },
     updateMonetaryItem: async (
-      _: any,
+      _: unknown,
       args: {
         _id: string;
         monetaryItem: {
@@ -109,7 +107,7 @@ const resolvers = {
       );
       return updatedMonetaryItem;
     },
-    deleteMonetaryItem: async (_: any, args: { _id: string }) => {
+    deleteMonetaryItem: async (_: unknown, args: { _id: string }) => {
       const deletedMonetaryItem = await monetaryItem.findByIdAndDelete(
         args._id
       );

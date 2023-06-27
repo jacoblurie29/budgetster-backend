@@ -17,6 +17,7 @@ const typeDefs = `#graphql
     }
 
     input MonetaryItemInput {
+        _id: String
         name: String!
         value: Float!
         date: String!
@@ -29,11 +30,12 @@ const typeDefs = `#graphql
     type Query {
         getMonetaryItems(limit: Int): [MonetaryItem]
         getMonetaryItem(_id: String!): MonetaryItem
+        getMonetaryItemsByType(type: String!): [MonetaryItem]
     }
 
     type Mutation {
         createMonetaryItem(monetaryItem: MonetaryItemInput): MonetaryItem
-        updateMonetaryItem(_id: String!, monetaryItem: MonetaryItemInput): MonetaryItem
+        updateMonetaryItem(monetaryItem: MonetaryItemInput): MonetaryItem
         deleteMonetaryItem(_id: String!): MonetaryItem
     }
 `;
@@ -47,6 +49,10 @@ const resolvers = {
     getMonetaryItem: async (_: unknown, args: { _id: string }) => {
       const monetaryItemById = await monetaryItem.findById(args._id);
       return monetaryItemById;
+    },
+    getMonetaryItemsByType: async (_: unknown, args: { type: string }) => {
+      const monetaryItemsByType = await monetaryItem.find({ type: args.type });
+      return monetaryItemsByType;
     },
   },
   Mutation: {
@@ -80,8 +86,8 @@ const resolvers = {
     updateMonetaryItem: async (
       _: unknown,
       args: {
-        _id: string;
         monetaryItem: {
+          _id: string;
           name: string;
           value: number;
           date: Date;
@@ -93,7 +99,7 @@ const resolvers = {
       }
     ) => {
       const updatedMonetaryItem = await monetaryItem.findByIdAndUpdate(
-        args._id,
+        args.monetaryItem._id,
         {
           name: args.monetaryItem.name,
           value: args.monetaryItem.value,

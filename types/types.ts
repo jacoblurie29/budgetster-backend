@@ -1,3 +1,4 @@
+/* eslint-disable autofix/no-unused-vars */
 /**
  * @enum MonetaryItem - Interface for a monetary item.
  *

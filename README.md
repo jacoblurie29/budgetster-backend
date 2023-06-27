@@ -2,7 +2,7 @@
 
 ### About
 
-This is the backend for Budgetster, a budgeting app that allows users to track their spending and saving. The backend is built with Node.js, MongoDB, and GraphQL. The frontend is built with React and Typescript and can be found [here](https://github.com/jacoblurie29/budgetster-frontend). 
+This is the backend for Budgetster, a budgeting app that allows users to track their spending and saving. The backend is built with Node.js, MongoDB, and GraphQL. The frontend is built with React and Typescript and can be found [here](https://github.com/jacoblurie29/budgetster-frontend).
 
 ### Prerequisites
 

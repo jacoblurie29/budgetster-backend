@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import MonetaryItem from "../interfaces/monetaryItem.interface";
+import type MonetaryItem from "../interfaces/monetaryItem.interface";
 
 const monetaryItemSchema = new Schema<MonetaryItem>({
   _id: {

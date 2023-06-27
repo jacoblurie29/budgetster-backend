@@ -1,5 +1,6 @@
-import mongoose, { ConnectOptions } from "mongoose";
+import mongoose from "mongoose";
 import dotenv from "dotenv";
+import type { ConnectOptions } from "mongoose";
 dotenv.config();
 
 const connectToMongoDB = async () => {
@@ -9,7 +10,7 @@ const connectToMongoDB = async () => {
       useUnifiedTopology: true,
     } as ConnectOptions);
     console.log(
-      "[MONGODB]: 💻 Connected to MongoDB at " + connection.connection.host
+      "🔌 [MONGODB]: Connected to MongoDB at " + connection.connection.host
     );
     return connection;
   } catch (error) {

@@ -1,0 +1,37 @@
+export const monetaryItemSeedData = [
+  {
+    name: "Rent",
+    value: 1000,
+    date: new Date("2021-01-01"),
+    repeat: true,
+    repeatPeriod: "monthly",
+    repeatEndDate: new Date("2021-12-31"),
+    type: "expense",
+  },
+  {
+    name: "Groceries",
+    value: 200,
+    date: new Date("2021-01-01"),
+    repeat: true,
+    repeatPeriod: "weekly",
+    repeatEndDate: new Date("2021-12-31"),
+    type: "expense",
+  },
+  {
+    name: "Salary",
+    value: 2000,
+    date: new Date("2021-01-01"),
+    repeat: true,
+    repeatPeriod: "monthly",
+    repeatEndDate: new Date("2021-12-31"),
+    type: "income",
+  },
+  {
+    name: "Bonus",
+    value: 500,
+    date: new Date("2021-01-01"),
+    repeat: false,
+    repeatEndDate: new Date("2021-12-31"),
+    type: "income",
+  },
+];

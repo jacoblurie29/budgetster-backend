@@ -15,7 +15,7 @@ const monetaryItemSchema = new Schema<MonetaryItem>({
     required: true,
   },
   date: {
-    type: Date,
+    type: String,
     required: true,
   },
   repeat: {
@@ -26,7 +26,7 @@ const monetaryItemSchema = new Schema<MonetaryItem>({
     type: String,
   },
   repeatEndDate: {
-    type: Date,
+    type: String,
   },
   type: {
     type: String,

@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import { TimePeriod, MonetaryItemCategory } from "../types/types";
+import type mongoose from "mongoose";
+import type { TimePeriod, MonetaryItemCategory } from "../types/types";
 
 /**
  * @interface MonetaryItem - Interface for a monetary item.
@@ -17,10 +17,11 @@ interface MonetaryItem {
   _id: mongoose.Types.ObjectId;
   name: string;
   value: number;
-  date: Date;
+  date: string;
+  r;
   repeat: boolean;
   repeatPeriod?: TimePeriod;
-  repeatEndDate?: Date;
+  repeatEndDate?: string;
   type: MonetaryItemCategory;
 }
 

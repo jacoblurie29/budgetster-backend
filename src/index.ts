@@ -37,6 +37,10 @@ const typeDefs = `#graphql
       type: String!
   }
 
+    type MonetaryItemDeleteResponse {
+      deletedCount: Int!
+    }
+
     type Query {
         getMonetaryItems(limit: Int): [MonetaryItem]
         getMonetaryItem(_id: String!): MonetaryItem
@@ -47,6 +51,7 @@ const typeDefs = `#graphql
         createMonetaryItem(monetaryItem: MonetaryItemInput): MonetaryItem
         updateMonetaryItem(monetaryItem: MonetaryItemUpdate): MonetaryItem
         deleteMonetaryItem(_id: String!): MonetaryItem
+        deleteMonetaryItems(_ids: [String]!): MonetaryItemDeleteResponse
     }
 `;
 
@@ -130,6 +135,14 @@ const resolvers = {
         args._id
       );
       return deletedMonetaryItem;
+    },
+    deleteMonetaryItems: async (_: unknown, args: { _ids: string[] }) => {
+      const deletedMonetaryItems = await monetaryItem.deleteMany({
+        _id: { $in: args._ids },
+      });
+      return {
+        deletedCount: deletedMonetaryItems.deletedCount,
+      };
     },
   },
 };

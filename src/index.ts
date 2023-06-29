@@ -16,8 +16,8 @@ const typeDefs = `#graphql
         type: String!
     }
 
-    input MonetaryItemInput {
-        _id: String
+    input MonetaryItemUpdate {
+        _id: String!
         name: String!
         value: Float!
         date: String!
@@ -27,6 +27,16 @@ const typeDefs = `#graphql
         type: String!
     }
 
+    input MonetaryItemInput {
+      name: String!
+      value: Float!
+      date: String!
+      repeat: Boolean!
+      repeatPeriod: String
+      repeatEndDate: String
+      type: String!
+  }
+
     type Query {
         getMonetaryItems(limit: Int): [MonetaryItem]
         getMonetaryItem(_id: String!): MonetaryItem
@@ -35,7 +45,7 @@ const typeDefs = `#graphql
 
     type Mutation {
         createMonetaryItem(monetaryItem: MonetaryItemInput): MonetaryItem
-        updateMonetaryItem(monetaryItem: MonetaryItemInput): MonetaryItem
+        updateMonetaryItem(monetaryItem: MonetaryItemUpdate): MonetaryItem
         deleteMonetaryItem(_id: String!): MonetaryItem
     }
 `;
@@ -62,16 +72,17 @@ const resolvers = {
         monetaryItem: {
           name: string;
           value: number;
-          date: Date;
+          date: string;
           repeat?: boolean;
           repeatPeriod?: string;
-          repeatEndDate: Date;
+          repeatEndDate: string;
           type: string;
         };
       }
     ) => {
+      const _id = new mongoose.Types.ObjectId().toString();
       const newMonetaryItem = new monetaryItem({
-        _id: new mongoose.Types.ObjectId(),
+        _id: _id,
         name: args.monetaryItem.name,
         value: args.monetaryItem.value,
         date: args.monetaryItem.date,
@@ -80,7 +91,8 @@ const resolvers = {
         repeatEndDate: args.monetaryItem.repeatEndDate,
         type: args.monetaryItem.type,
       });
-      await newMonetaryItem.save();
+      const response = await newMonetaryItem.save();
+      console.log(response);
       return newMonetaryItem;
     },
     updateMonetaryItem: async (
@@ -90,10 +102,10 @@ const resolvers = {
           _id: string;
           name: string;
           value: number;
-          date: Date;
+          date: string;
           repeat: boolean;
           repeatPeriod?: string;
-          repeatEndDate: Date;
+          repeatEndDate: string;
           type: string;
         };
       }

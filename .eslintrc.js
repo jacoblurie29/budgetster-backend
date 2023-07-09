@@ -8,7 +8,6 @@ module.exports = {
   extends: [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:react/recommended",
     "plugin:import/recommended",
     "plugin:import/typescript",
     "plugin:import/errors",
@@ -53,9 +52,6 @@ module.exports = {
     ],
   },
   settings: {
-    react: {
-      version: "detect",
-    },
     "import/resolver": {
       node: {
         extensions: [".js", ".jsx", ".ts", ".tsx"],

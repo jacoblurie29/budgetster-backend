@@ -1,4 +1,6 @@
 /* eslint-disable autofix/no-unused-vars */
+import type { IncomingMessage } from "http";
+
 /**
  * @enum MonetaryItem - Interface for a monetary item.
  *
@@ -24,4 +26,16 @@ export enum MonetaryItemCategory {
   EXPENSE = "expense",
   SAVINGS = "savings",
   INVESTMENT = "investment",
+}
+
+/**
+ * @interface MonetaryItem - Interface for a monetary item.
+ * @param {string} _id - The id of the monetary item.
+ * @param {string} name - The name of the monetary item.
+ */
+export interface AuthenticatedRequest extends IncomingMessage {
+  user?: {
+    _id: string;
+    email: string;
+  };
 }

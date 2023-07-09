@@ -1,62 +1,9 @@
-import connectToMongoDB from "../config/mongodb.config";
 import monetaryItem from "../models/monetaryItem.model";
-import { configureApolloServer } from "../config/apolloServer.config";
-import { ApolloServer } from "@apollo/server";
+import User from "../models/user.model";
 import mongoose from "mongoose";
 import type { TimePeriod, MonetaryItemCategory } from "../types/types";
 
-const typeDefs = `#graphql
-    type MonetaryItem {
-        _id: String!
-        name: String!
-        value: Float!
-        date: String!
-        repeat: Boolean!
-        repeatPeriod: String
-        repeatEndDate: String
-        type: String!
-    }
-
-    input MonetaryItemUpdate {
-        _id: String!
-        name: String!
-        value: Float!
-        date: String!
-        repeat: Boolean!
-        repeatPeriod: String
-        repeatEndDate: String
-        type: String!
-    }
-
-    input MonetaryItemInput {
-      name: String!
-      value: Float!
-      date: String!
-      repeat: Boolean!
-      repeatPeriod: String
-      repeatEndDate: String
-      type: String!
-  }
-
-    type MonetaryItemDeleteResponse {
-      deletedCount: Int!
-    }
-
-    type Query {
-        getMonetaryItems(limit: Int): [MonetaryItem]
-        getMonetaryItem(_id: String!): MonetaryItem
-        getMonetaryItemsByType(type: String!): [MonetaryItem]
-    }
-
-    type Mutation {
-        createMonetaryItem(monetaryItem: MonetaryItemInput): MonetaryItem
-        updateMonetaryItem(monetaryItem: MonetaryItemUpdate): MonetaryItem
-        deleteMonetaryItem(_id: String!): MonetaryItem
-        deleteMonetaryItems(_ids: [String]!): MonetaryItemDeleteResponse
-    }
-`;
-
-const resolvers = {
+const monetaryItemResolvers = {
   Query: {
     getMonetaryItems: async (_: unknown, args: { limit: number }) => {
       const monetaryItems = await monetaryItem.find().limit(args.limit);
@@ -69,6 +16,10 @@ const resolvers = {
     getMonetaryItemsByType: async (_: unknown, args: { type: string }) => {
       const monetaryItemsByType = await monetaryItem.find({ type: args.type });
       return monetaryItemsByType;
+    },
+    getUser: async (_: unknown, args: { _id: string }) => {
+      const user = await User.findById(args._id);
+      return user;
     },
   },
   Mutation: {
@@ -152,11 +103,4 @@ const resolvers = {
   },
 };
 
-connectToMongoDB();
-
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-});
-
-configureApolloServer(server);
+export default monetaryItemResolvers;

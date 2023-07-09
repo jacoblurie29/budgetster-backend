@@ -34,9 +34,6 @@ const monetaryItemSchema = new Schema<MonetaryItem>({
   },
 });
 
-const monetaryItem = model<MonetaryItem>(
-  "MonetaryItemModel",
-  monetaryItemSchema
-);
+const monetaryItem = model<MonetaryItem>("MonetaryItem", monetaryItemSchema);
 
 export default monetaryItem;

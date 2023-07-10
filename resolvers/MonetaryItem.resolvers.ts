@@ -1,6 +1,5 @@
 import monetaryItem from "../models/monetaryItem.model";
 import User from "../models/user.model";
-import mongoose from "mongoose";
 import type { TimePeriod, MonetaryItemCategory } from "../types/types";
 
 const monetaryItemResolvers = {
@@ -37,9 +36,7 @@ const monetaryItemResolvers = {
         };
       }
     ) => {
-      const _id = new mongoose.Types.ObjectId().toString();
       const newMonetaryItem = new monetaryItem({
-        _id: _id,
         name: args.monetaryItem.name,
         value: args.monetaryItem.value,
         date: args.monetaryItem.date,

@@ -1,5 +1,4 @@
 /* eslint-disable autofix/no-unused-vars */
-import type { IncomingMessage } from "http";
 
 /**
  * @enum MonetaryItem - Interface for a monetary item.
@@ -29,13 +28,32 @@ export enum MonetaryItemCategory {
 }
 
 /**
- * @interface MonetaryItem - Interface for a monetary item.
- * @param {string} _id - The id of the monetary item.
- * @param {string} name - The name of the monetary item.
+ * @enum MonetaryItem - Interface for a monetary item.
+ *
+ * @param {string} AUTH - The auth token.
+ * @param {string} REFRESH - The refresh token.
  */
-export interface AuthenticatedRequest extends IncomingMessage {
+export enum tokenType {
+  AUTH = "auth",
+  REFRESH = "refresh",
+}
+
+/**
+ * @interface TokenPayload - Interface for a token payload.
+ *
+ * @param {string} user_id - The id of the user.
+ * @param {string} email - The email of the user.
+ */
+export interface TokenPayload {
+  user_id: string;
+  email: string;
+}
+
+export interface BudgetsterContext {
   user?: {
-    _id: string;
+    user_id: string;
     email: string;
+    iat: number;
+    exp: number;
   };
 }

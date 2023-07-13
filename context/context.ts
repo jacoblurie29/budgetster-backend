@@ -1,5 +1,6 @@
 import { ApolloError } from "apollo-server-errors";
 import * as jwt from "jsonwebtoken";
+import type { BudgetsterContext } from "../types/types";
 
 const getUser = async (token) => {
   try {
@@ -15,20 +16,20 @@ const getUser = async (token) => {
 };
 
 const context = async ({ req }) => {
-  console.log(req.body.operationName);
   if (req.body.operationName === "IntrospectionQuery") {
     // console.log('blocking introspection query..');
-    return {};
+    return {} as BudgetsterContext;
   }
   // allowing the 'CreateUser' and 'Login' queries to pass without giving the token
   if (
     req.body.operationName === "RegisterUser" ||
-    req.body.operationName === "LoginUser"
+    req.body.operationName === "LoginUser" ||
+    req.body.operationName === "RefreshToken"
   ) {
     console.log(
-      "✅ [LOGIN/REG]: allowing register and login queries to pass without token"
+      "✅ [LOGIN/REG]: allowing register, login, and refresh queries to pass without token"
     );
-    return {};
+    return {} as BudgetsterContext;
   }
 
   // get the user token from the headers
@@ -45,7 +46,7 @@ const context = async ({ req }) => {
   }
 
   // add the user to the context
-  return { user };
+  return { user } as BudgetsterContext;
 };
 
 export default context;

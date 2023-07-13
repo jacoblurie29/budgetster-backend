@@ -18,13 +18,15 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-  token: {
+  authToken: {
+    type: String,
+  },
+  refreshToken: {
     type: String,
   },
   monetaryItems: [
     {
       type: Schema.Types.ObjectId,
-
       ref: "MonetaryItem",
     },
   ],

@@ -6,8 +6,9 @@ const userTypeDefs = gql`
     firstName: String!
     lastName: String!
     email: String!
-    password: String!
-    token: String!
+    password: String
+    authToken: String!
+    refreshToken: String!
     monetaryItems: [MonetaryItem]
   }
 
@@ -23,13 +24,18 @@ const userTypeDefs = gql`
     password: String!
   }
 
+  input RefreshTokenInput {
+    refreshToken: String!
+  }
+
   type Query {
-    getUser(_id: String!): User
+    getUser: User
   }
 
   type Mutation {
     registerUser(registerInput: RegisterInput): User
     loginUser(loginInput: LoginInput): User
+    refreshToken(refreshTokenInput: RefreshTokenInput): User
   }
 `;
 

@@ -1,6 +1,11 @@
 import monetaryItem from "../models/monetaryItem.model";
 import User from "../models/user.model";
-import type { TimePeriod, MonetaryItemCategory } from "../types/types";
+import { ApolloError } from "apollo-server-errors";
+import type {
+  TimePeriod,
+  MonetaryItemCategory,
+  BudgetsterContext,
+} from "../types/types";
 
 const monetaryItemResolvers = {
   Query: {
@@ -16,10 +21,6 @@ const monetaryItemResolvers = {
       const monetaryItemsByType = await monetaryItem.find({ type: args.type });
       return monetaryItemsByType;
     },
-    getUser: async (_: unknown, args: { _id: string }) => {
-      const user = await User.findById(args._id);
-      return user;
-    },
   },
   Mutation: {
     createMonetaryItem: async (
@@ -29,12 +30,13 @@ const monetaryItemResolvers = {
           name: string;
           value: number;
           date: string;
-          repeat?: boolean;
+          repeat: boolean;
           repeatPeriod?: string;
-          repeatEndDate: string;
+          repeatEndDate?: string;
           type: string;
         };
-      }
+      },
+      context: BudgetsterContext
     ) => {
       const newMonetaryItem = new monetaryItem({
         name: args.monetaryItem.name,
@@ -45,8 +47,18 @@ const monetaryItemResolvers = {
         repeatEndDate: args.monetaryItem.repeatEndDate,
         type: args.monetaryItem.type,
       });
-      const response = await newMonetaryItem.save();
-      console.log(response);
+
+      const user = await User.findById(context.user.user_id);
+
+      if (!user) {
+        throw new ApolloError("User not found", "USER_NOT_FOUND");
+      }
+
+      user.monetaryItems.push(newMonetaryItem._id);
+
+      await newMonetaryItem.save();
+      await user.save();
+
       return newMonetaryItem;
     },
     updateMonetaryItem: async (

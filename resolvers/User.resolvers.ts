@@ -1,8 +1,8 @@
 import User from "../models/user.model";
 import { createTokens, verifyToken } from "../util/tokenUtil";
 import { tokenType } from "../types/types";
-import { ApolloError } from "apollo-server-errors";
 import bcrypt from "bcrypt";
+import { GraphQLError } from "graphql";
 import type { BudgetsterContext } from "../types/types";
 
 const userResolvers = {
@@ -13,10 +13,11 @@ const userResolvers = {
       );
 
       if (!user) {
-        throw new ApolloError(
-          "User does not exist with that id: " + context.user.user_id,
-          "USER_DOES_NOT_EXIST"
-        );
+        throw new GraphQLError("User not found", {
+          extensions: {
+            code: "USER_NOT_FOUND",
+          },
+        });
       }
 
       return {
@@ -27,6 +28,79 @@ const userResolvers = {
         authToken: user.authToken,
         refreshToken: user.refreshToken,
         monetaryItems: user.monetaryItems,
+      };
+    },
+    /**
+     * Refresh Token Mutation - Takes in a refresh token and returns a new auth token and refresh token
+     *
+     * @param refreshTokenInput.refreshToken - Refresh token from the client
+     */
+    refreshToken: async (
+      _: unknown,
+      args: {
+        refreshTokenInput: {
+          refreshToken: string;
+        };
+      }
+    ) => {
+      // Verify refresh token
+      const decodedRefreshToken = await verifyToken(
+        args.refreshTokenInput.refreshToken,
+        tokenType.REFRESH
+      );
+
+      // Throw error if token is null
+      if (!decodedRefreshToken) {
+        throw new GraphQLError("Refresh token is invalid.", {
+          extensions: {
+            code: "REFRESH_TOKEN_INVALID",
+          },
+        });
+      }
+
+      // Check if refresh token matches the one in mongo
+      const user = await User.findOne({
+        _id: decodedRefreshToken.user_id,
+      });
+
+      // Throw error if user does not exist
+      if (!user) {
+        throw new GraphQLError("User not found", {
+          extensions: {
+            code: "USER_NOT_FOUND",
+          },
+        });
+      }
+
+      // Check if refresh token matches the one in mongo
+      if (user.refreshToken !== args.refreshTokenInput.refreshToken) {
+        throw new GraphQLError("Refresh token is invalid.", {
+          extensions: {
+            code: "REFRESH_TOKEN_INVALID",
+          },
+        });
+      }
+
+      const { authToken, refreshToken } = await createTokens(
+        user._id.toString(),
+        user.email
+      );
+
+      // Attach token to user model
+      user.authToken = authToken;
+      user.refreshToken = refreshToken;
+
+      // Save user
+      await user.save();
+
+      // Return user
+      return {
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        authToken: user.authToken,
+        refreshToken: user.refreshToken,
       };
     },
   },
@@ -47,9 +121,13 @@ const userResolvers = {
 
       // Throw error
       if (oldUser) {
-        throw new ApolloError(
+        throw new GraphQLError(
           "User already exists with that email: " + args.registerInput.email,
-          "USER_ALREADY_EXISTS"
+          {
+            extensions: {
+              code: "USER_ALREADY_EXISTS",
+            },
+          }
         );
       }
 
@@ -108,10 +186,11 @@ const userResolvers = {
 
       // Throw error
       if (!user) {
-        throw new ApolloError(
-          "User does not exist with that email: " + args.loginInput.email,
-          "USER_DOES_NOT_EXIST"
-        );
+        throw new GraphQLError("User not found", {
+          extensions: {
+            code: "USER_NOT_FOUND",
+          },
+        });
       }
 
       // Check password
@@ -122,9 +201,13 @@ const userResolvers = {
 
       // Throw error
       if (!isPasswordCorrect) {
-        throw new ApolloError(
+        throw new GraphQLError(
           "Password is incorrect for user: " + args.loginInput.email,
-          "PASSWORD_INCORRECT"
+          {
+            extensions: {
+              code: "PASSWORD_INCORRECT",
+            },
+          }
         );
       }
 
@@ -149,77 +232,6 @@ const userResolvers = {
         authToken: user.authToken,
         refreshToken: user.refreshToken,
         monetaryItems: user.monetaryItems,
-      };
-    },
-
-    /**
-     * Refresh Token Mutation - Takes in a refresh token and returns a new auth token and refresh token
-     *
-     * @param refreshTokenInput.refreshToken - Refresh token from the client
-     */
-    refreshToken: async (
-      _: unknown,
-      args: {
-        refreshTokenInput: {
-          refreshToken: string;
-        };
-      }
-    ) => {
-      // Verify refresh token
-      const decodedRefreshToken = await verifyToken(
-        args.refreshTokenInput.refreshToken,
-        tokenType.REFRESH
-      );
-
-      // Throw error if token is null
-      if (!decodedRefreshToken) {
-        throw new ApolloError(
-          "Refresh token is invalid.",
-          "REFRESH_TOKEN_INVALID"
-        );
-      }
-
-      // Check if refresh token matches the one in mongo
-      const user = await User.findOne({
-        _id: decodedRefreshToken.user_id,
-      });
-
-      // Throw error if user does not exist
-      if (!user) {
-        throw new ApolloError(
-          "User does not exist with that email: " + decodedRefreshToken.email,
-          "USER_DOES_NOT_EXIST"
-        );
-      }
-
-      // Check if refresh token matches the one in mongo
-      if (user.refreshToken !== args.refreshTokenInput.refreshToken) {
-        throw new ApolloError(
-          "Refresh token is invalid.",
-          "REFRESH_TOKEN_INVALID"
-        );
-      }
-
-      const { authToken, refreshToken } = await createTokens(
-        user._id.toString(),
-        user.email
-      );
-
-      // Attach token to user model
-      user.authToken = authToken;
-      user.refreshToken = refreshToken;
-
-      // Save user
-      await user.save();
-
-      // Return user
-      return {
-        _id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        authToken: user.authToken,
-        refreshToken: user.refreshToken,
       };
     },
   },

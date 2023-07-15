@@ -1,6 +1,6 @@
 import monetaryItem from "../models/monetaryItem.model";
 import User from "../models/user.model";
-import { ApolloError } from "apollo-server-errors";
+import { GraphQLError } from "graphql";
 import type {
   TimePeriod,
   MonetaryItemCategory,
@@ -51,7 +51,11 @@ const monetaryItemResolvers = {
       const user = await User.findById(context.user.user_id);
 
       if (!user) {
-        throw new ApolloError("User not found", "USER_NOT_FOUND");
+        throw new GraphQLError("User not found", {
+          extensions: {
+            code: "USER_NOT_FOUND",
+          },
+        });
       }
 
       user.monetaryItems.push(newMonetaryItem._id);

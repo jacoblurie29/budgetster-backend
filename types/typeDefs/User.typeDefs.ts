@@ -30,12 +30,12 @@ const userTypeDefs = gql`
 
   type Query {
     getUser: User
+    refreshToken(refreshTokenInput: RefreshTokenInput): User
   }
 
   type Mutation {
     registerUser(registerInput: RegisterInput): User
     loginUser(loginInput: LoginInput): User
-    refreshToken(refreshTokenInput: RefreshTokenInput): User
   }
 `;
 

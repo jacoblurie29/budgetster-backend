@@ -1,5 +1,5 @@
-import { ApolloError } from "apollo-server-errors";
 import * as jwt from "jsonwebtoken";
+import { GraphQLError } from "graphql";
 import type { BudgetsterContext } from "../types/types";
 
 const getUser = async (token) => {
@@ -39,10 +39,11 @@ const context = async ({ req }) => {
   const user = await getUser(token);
 
   if (!user) {
-    throw new ApolloError(
-      "User is not Authenticated",
-      "USER_NOT_AUTHENTICATED"
-    );
+    throw new GraphQLError("User is not Authenticated", {
+      extensions: {
+        code: "USER_NOT_AUTHENTICATED",
+      },
+    });
   }
 
   // add the user to the context

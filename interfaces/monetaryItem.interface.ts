@@ -18,7 +18,6 @@ interface MonetaryItem {
   name: string;
   value: number;
   date: string;
-  r;
   repeat: boolean;
   repeatPeriod?: TimePeriod;
   repeatEndDate?: string;

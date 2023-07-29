@@ -1,6 +1,7 @@
 import monetaryItem from "../models/monetaryItem.model";
 import User from "../models/user.model";
 import { GraphQLError } from "graphql";
+import type MonetaryItem from "../interfaces/monetaryItem.interface";
 import type {
   TimePeriod,
   MonetaryItemCategory,
@@ -9,16 +10,33 @@ import type {
 
 const monetaryItemResolvers = {
   Query: {
-    getMonetaryItems: async (_: unknown, args: { limit: number }) => {
-      const monetaryItems = await monetaryItem.find().limit(args.limit);
-      return monetaryItems;
+    getMonetaryItems: async (
+      _: unknown,
+      args: { limit: number },
+      context: BudgetsterContext
+    ) => {
+      const user = await User.findById(context.user.user_id).populate(
+        "monetaryItems"
+      );
+      return user.monetaryItems.slice(0, args.limit);
     },
     getMonetaryItem: async (_: unknown, args: { _id: string }) => {
       const monetaryItemById = await monetaryItem.findById(args._id);
       return monetaryItemById;
     },
-    getMonetaryItemsByType: async (_: unknown, args: { type: string }) => {
-      const monetaryItemsByType = await monetaryItem.find({ type: args.type });
+    getMonetaryItemsByType: async (
+      _: unknown,
+      args: { type: string },
+      context: BudgetsterContext
+    ) => {
+      const user = await User.findById(context.user.user_id).populate(
+        "monetaryItems"
+      );
+
+      const monetaryItemsByType = (
+        user.monetaryItems as unknown as MonetaryItem[]
+      ).filter((monetaryItem) => monetaryItem.type === args.type);
+
       return monetaryItemsByType;
     },
   },

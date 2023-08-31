@@ -5,9 +5,7 @@ import userResolvers from "./resolvers/User.resolvers";
 import monetaryItemResolvers from "./resolvers/MonetaryItem.resolvers";
 
 import { configureApolloServer } from "./config/apolloServer.config";
-import dotenv from "dotenv";
 import { ApolloServer } from "@apollo/server";
-dotenv.config();
 
 const apolloSchema = {
   typeDefs: [userTypeDefs, monetaryItemTypeDefs],

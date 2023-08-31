@@ -24,6 +24,7 @@ const userResolvers = {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        budget: user.budget,
       };
     },
     /**
@@ -101,6 +102,28 @@ const userResolvers = {
     },
   },
   Mutation: {
+    updateUserBudget: async (
+      _: unknown,
+      args: {
+        budget: number;
+      },
+      context: BudgetsterContext
+    ) => {
+      const oldUser = await User.findById(context.user.user_id);
+
+      oldUser.budget = args.budget;
+
+      await oldUser.save();
+
+      console.log(oldUser);
+
+      return {
+        firstName: oldUser.firstName,
+        lastName: oldUser.lastName,
+        email: oldUser.email,
+        budget: oldUser.budget,
+      };
+    },
     registerUser: async (
       _: unknown,
       args: {
@@ -138,6 +161,7 @@ const userResolvers = {
         firstName: args.registerInput.firstName,
         lastName: args.registerInput.lastName,
         email: args.registerInput.email.toLowerCase(),
+        budget: 0,
         password: encryptedPassword,
       });
 
@@ -160,6 +184,7 @@ const userResolvers = {
         firstName: newUser.firstName,
         lastName: newUser.lastName,
         email: newUser.email,
+        budget: newUser.budget,
         authToken: newUser.authToken,
         refreshToken: newUser.refreshToken,
       };
@@ -225,6 +250,7 @@ const userResolvers = {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        budget: user.budget,
         authToken: user.authToken,
         refreshToken: user.refreshToken,
         monetaryItems: user.monetaryItems,

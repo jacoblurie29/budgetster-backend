@@ -6,6 +6,7 @@ const userTypeDefs = gql`
     firstName: String!
     lastName: String!
     email: String!
+    budget: Float!
     password: String
     authToken: String!
     refreshToken: String!
@@ -36,6 +37,7 @@ const userTypeDefs = gql`
   type Mutation {
     registerUser(registerInput: RegisterInput): User
     loginUser(loginInput: LoginInput): User
+    updateUserBudget(budget: Float!): User
   }
 `;
 
